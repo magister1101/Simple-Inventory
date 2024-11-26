@@ -18,9 +18,8 @@
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4"
   },
+  "main": "api/server.js",
   "scripts": {
-    "build": "webpack",
-    "start": "node server.js",
-    "startdev": "nodemon server.js"
+    "start": "node server.js"
   }
 }
