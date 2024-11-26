@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { default: mongoose, mongo } = require('mongoose');
 const dotenv = require('dotenv');
-const { createServer } = require('@vercel/node');
 const serverless = require('serverless-http');
 
 
