@@ -6,6 +6,7 @@ const cors = require('cors');
 const { default: mongoose, mongo } = require('mongoose');
 const dotenv = require('dotenv');
 const { createServer } = require('@vercel/node');
+const serverless = require('serverless-http');
 
 
 // router link
@@ -56,3 +57,4 @@ app.use((error, req, res, next) => {
 
 
 module.exports = app;
+module.exports.handler = serverless(app);
