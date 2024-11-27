@@ -17,10 +17,6 @@ const performLog = async (userId, action, reference, key, res) => {
         if (key === 'user') {
             const _user = await User.findOne({ _id: reference });
             newReference = _user.firstName + ' ' + _user.lastName + ' (USER)';
-        }
-        else if (key === 'item') {
-            const _item = await Item.findOne({ _id: reference });
-            newReference = _item.name + ' (ITEM)';
         } else {
             return console.log({ message: 'Invalid key' });
         }
