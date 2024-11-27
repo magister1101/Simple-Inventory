@@ -10,7 +10,7 @@ const item = require('../models/item');
 //ROUTERS
 
 router.get('/', checkAuth, itemsController.items_search_item);
-router.get('/logs', checkAuth, itemsController.logs_get_log);
+router.get('/getLogs', checkAuth, itemsController.viewLogs);
 router.post('/', checkAuth, itemsController.items_create_item);
 router.put('/update/:id', checkAuth, itemsController.items_update_item);
 
