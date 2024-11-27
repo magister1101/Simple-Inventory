@@ -3,6 +3,50 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
+const Log = require('../models/log');
+
+const performLog = async (userId, action, reference, key, res) => {
+    try {
+        const user = await User.findOne({ _id: userId });
+        if (!user) {
+            return console.log({ message: 'User not found' });
+        }
+
+        var newReference = null;
+
+        if (key === 'user') {
+            const _user = await User.findOne({ _id: reference });
+            newReference = _user.firstName + ' ' + _user.lastName + ' (USER)';
+        }
+        else if (key === 'item') {
+            const _item = await Item.findOne({ _id: reference });
+            newReference = _item.name + ' (ITEM)';
+        } else {
+            return console.log({ message: 'Invalid key' });
+        }
+
+        const name = user.firstName + ' ' + user.lastName;
+
+        const log = new Log({
+            _id: new mongoose.Types.ObjectId(),
+            name: name,
+            action: action,
+            reference: newReference,
+        });
+
+        await log.save();
+        return console.log({ message: 'Log saved successfully', log });
+
+    } catch (err) {
+        console.error('Error performing log:', err);
+        if (res) {
+            return console.log({
+                message: 'Error in performing log',
+                error: err.message
+            });
+        }
+    }
+};
 
 exports.users_get_user = async (req, res, next) => {
     try {
@@ -162,6 +206,7 @@ exports.users_create_user = (req, res, next) => {
                             username: req.body.username,
                             password: hash,
                         })
+                        performLog("admin", "create", userId, "user", res)
                         user.save()
                             .then(doc => {
                                 return res.status(201).json({ doc });
@@ -241,9 +286,9 @@ exports.users_update_user = async (req, res, next) => {
             message: "Employee Id already exists"
         });
     }
-
     else {
 
+        performLog("admin", "update", id, "user", res)
         if (updateFields.password) {
             const bcrypt = require('bcrypt');
             const saltRounds = 10;
@@ -283,3 +328,4 @@ const performUpdate = (id, updateFields, res) => {
             });
         })
 };
+
