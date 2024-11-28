@@ -250,7 +250,7 @@ exports.items_create_item = async (req, res, next) => {
             description: req.body.description,
             loggedBy: req.body.loggedBy,
         });
-        performLog(userId, 'update', itemId, 'item', res)
+        performLog(userId, 'created', itemId, 'item', res)
 
         const updatedItem = await item.save();
 
@@ -271,7 +271,13 @@ exports.items_update_item = async (req, res, next) => {
     const userId = req.userData.userId;
     const id = req.params.id;
     const updateFields = req.body;
-    await performLog(userId, 'update', id, 'item', res)
+    if (updateFields.active) {
+        await performLog(userId, 'deleted', id, 'item', res)
+    }
+    else {
+        await performLog(userId, 'update', id, 'item', res)
+    }
+
     performUpdate(id, updateFields, res);
 };
 
