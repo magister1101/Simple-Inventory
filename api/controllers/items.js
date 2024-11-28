@@ -250,7 +250,7 @@ exports.items_create_item = async (req, res, next) => {
             description: req.body.description,
             loggedBy: req.body.loggedBy,
         });
-        await performLog(userId, 'create', itemId, 'item', res)
+        performLog(userId, 'update', itemId, 'item', res)
 
         const updatedItem = await item.save();
 
