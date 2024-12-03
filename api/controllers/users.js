@@ -269,44 +269,25 @@ exports.users_login_user = (req, res, next) => {
 exports.users_update_user = async (req, res, next) => {
     const id = req.params.id;
     const updateFields = req.body;
-    let userExist = false;
-    await User.find({ username: updateFields.username })
-        .then(user => {
-            if (user.length >= 1) {
-                userExist = true;
-            }
-        })
+    performLog("admin", "update", id, "user", res)
+    if (updateFields.password) {
+        const bcrypt = require('bcrypt');
+        const saltRounds = 10;
 
-    if (userExist) {
-        return res.status(200).json({
-            message: "Employee Id already exists"
+        bcrypt.hash(updateFields.password, saltRounds, (err, hash) => {
+            if (err) {
+                return res.status(500).json({
+                    message: "Error in hashing password",
+                    error: err
+                });
+            }
+            updateFields.password = hash;
+            performUpdate(id, updateFields, res);
         });
     }
     else {
-
-        performLog("admin", "update", id, "user", res)
-        if (updateFields.password) {
-            const bcrypt = require('bcrypt');
-            const saltRounds = 10;
-
-            bcrypt.hash(updateFields.password, saltRounds, (err, hash) => {
-                if (err) {
-                    return res.status(500).json({
-                        message: "Error in hashing password",
-                        error: err
-                    });
-                }
-                updateFields.password = hash;
-                performUpdate(id, updateFields, res);
-            });
-        }
-        else {
-            performUpdate(id, updateFields, res);
-        }
-
+        performUpdate(id, updateFields, res);
     }
-
-
 };
 
 const performUpdate = (id, updateFields, res) => {
